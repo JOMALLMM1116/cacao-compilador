@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Compilador - Lenguaje Cacao</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <header class="cabecera">
+    <div class="titulo-grupo">
+      <h1>Simulador de Compilador</h1>
+      <span class="subtitulo">Lenguaje <strong>Cacao</strong> &middot; Analizador Lexico y Sintactico LL(1)</span>
+    </div>
+    <button id="btn-tema" class="btn btn-tema">🌙 Modo oscuro</button>
+  </header>
+
+  <main class="contenedor">
+
+    <!-- ===== ENTRADA DE CODIGO ===== -->
+    <section class="panel">
+      <h2>1. Ingreso de codigo</h2>
+      <div class="editor-wrap">
+        <div id="gutter" class="gutter" aria-hidden="true"></div>
+        <textarea id="entrada-codigo" class="editor" spellcheck="false"
+          placeholder="Escribe aqui tu codigo en lenguaje Cacao..."></textarea>
+      </div>
+      <div class="botonera">
+        <button id="btn-analizar" class="btn btn-primario">▶ Analizar</button>
+        <button id="btn-ejemplo" class="btn">Cargar ejemplo</button>
+        <button id="btn-limpiar" class="btn">Limpiar</button>
+      </div>
+      <div id="estado-general" class="estado">Esperando analisis...</div>
+    </section>
+
+    <!-- ===== RESUMEN ===== -->
+    <section class="panel resumen">
+      <div class="tarjeta-dato">
+        <span class="num" id="conteo-lineas">0</span>
+        <span class="etq">Lineas analizadas</span>
+      </div>
+      <div class="tarjeta-dato">
+        <span class="num" id="conteo-tokens">0</span>
+        <span class="etq">Tokens generados</span>
+      </div>
+      <div class="tarjeta-dato">
+        <span class="num" id="conteo-simbolos">0</span>
+        <span class="etq">Identificadores</span>
+      </div>
+    </section>
+
+    <!-- ===== ANALISIS LEXICO ===== -->
+    <section class="panel">
+      <h2>2. Analisis Lexico &middot; Tokens generados</h2>
+      <div class="tabla-scroll">
+        <table id="tabla-tokens">
+          <thead>
+            <tr><th>#</th><th>Lexema</th><th>Cat.</th><th>Categoria</th><th>Codigo</th><th>Token</th><th>Linea</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== TABLA DE SIMBOLOS ===== -->
+    <section class="panel">
+      <h2>3. Tabla de simbolos (identificadores)</h2>
+      <div class="tabla-scroll">
+        <table id="tabla-simbolos">
+          <thead>
+            <tr><th>#</th><th>Nombre</th><th>Categoria</th><th>Linea (1ra aparicion)</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== CONTROL DE ERRORES ===== -->
+    <section class="panel">
+      <h2>4. Control de errores (lexicos y sintacticos)</h2>
+      <div class="tabla-scroll">
+        <table id="tabla-errores">
+          <thead>
+            <tr><th>#</th><th>Tipo</th><th>Descripcion</th><th>Linea</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== ANALISIS DE LA GRAMATICA (acordeon) ===== -->
+    <section class="panel">
+      <h2>5. Analisis de la gramatica (clic para desplegar)</h2>
+
+      <div class="acordeon">
+        <div class="acordeon-cabecera"><span class="flecha">▶</span> Factorizacion por la izquierda</div>
+        <div class="acordeon-cuerpo"><pre id="cont-factorizacion" class="bloque-texto"></pre></div>
+      </div>
+
+      <div class="acordeon">
+        <div class="acordeon-cabecera"><span class="flecha">▶</span> Eliminacion de recursividad izquierda</div>
+        <div class="acordeon-cuerpo"><pre id="cont-recursividad" class="bloque-texto"></pre></div>
+      </div>
+
+      <div class="acordeon">
+        <div class="acordeon-cabecera"><span class="flecha">▶</span> Conjuntos de Primeros  P()</div>
+        <div class="acordeon-cuerpo"><pre id="cont-primeros" class="bloque-texto"></pre></div>
+      </div>
+
+      <div class="acordeon">
+        <div class="acordeon-cabecera"><span class="flecha">▶</span> Conjuntos de Siguientes  S()</div>
+        <div class="acordeon-cuerpo"><pre id="cont-siguientes" class="bloque-texto"></pre></div>
+      </div>
+
+      <div class="acordeon">
+        <div class="acordeon-cabecera"><span class="flecha">▶</span> Tabla LL(1) (matriz no terminales x terminales)</div>
+        <div class="acordeon-cuerpo">
+          <div class="tabla-scroll" style="max-height:460px;overflow:auto;">
+            <div id="cont-tabla-ll1"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acordeon">
+        <div class="acordeon-cabecera"><span class="flecha">▶</span> Tabla de pila LL(1) (del codigo ingresado)</div>
+        <div class="acordeon-cuerpo">
+          <div class="tabla-scroll" style="max-height:420px;overflow:auto;">
+            <table id="tabla-pila">
+              <thead>
+                <tr><th>#</th><th>Pila</th><th>Entrada</th><th>Accion</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ARBOL SINTACTICO ===== -->
+    <section class="panel">
+      <h2>6. Analisis Sintactico &middot; Arbol</h2>
+      <div class="tabs-arbol">
+        <button id="tab-visual" class="tab activa">Vista visual</button>
+        <button id="tab-texto" class="tab">Vista texto</button>
+      </div>
+      <div id="contenedor-arbol" class="arbol-scroll"></div>
+      <pre id="arbol-texto" class="arbol-texto" style="display:none;"></pre>
+    </section>
+
+    <footer class="pie">
+      Lenguaje Cacao &middot; Proyecto de Compiladores &middot; Analizador Lexico-Sintactico LL(1)
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
